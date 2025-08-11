@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-react-app:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(rm:*)",
+      "Bash(npm install express cors dotenv)",
+      "Bash(npm install:*)",
+      "Bash(go get:*)",
+      "Bash(cargo:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": []
+  }
+}

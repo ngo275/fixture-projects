@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title|default:"Django" }}</title>
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        line-height: 1.5;
+        background: radial-gradient(1200px 600px at 10% -10%, #dbeafe33, transparent),
+          radial-gradient(1200px 600px at 110% 10%, #fce7f333, transparent);
+      }
+      header {
+        padding: 32px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+      }
+      .hero {
+        margin: 24px 0 8px;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 24px;
+      }
+      @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+      .card {
+        background: color-mix(in oklab, Canvas, CanvasText 3%);
+        border: 1px solid color-mix(in oklab, CanvasText 12%, transparent);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 16px 0 rgb(0 0 0 / 8%);
+      }
+      h1 { font-size: 28px; margin: 0 0 8px; }
+      p { margin: 6px 0 0; color: color-mix(in oklab, CanvasText, transparent 35%); }
+      code, kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .links { display: grid; gap: 8px; }
+      .link {
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 14px; border-radius: 10px; text-decoration: none;
+        border: 1px solid color-mix(in oklab, CanvasText 12%, transparent);
+        color: inherit;
+      }
+      .link:hover { background: color-mix(in oklab, Canvas, CanvasText 6%); }
+      .muted { color: color-mix(in oklab, CanvasText, transparent 45%); font-size: 14px; }
+      .posts { display: grid; gap: 10px; }
+      .post { padding: 12px 14px; border-radius: 10px; border: 1px solid color-mix(in oklab, CanvasText 12%, transparent); }
+      .empty { padding: 16px; border-radius: 8px; border: 1px dashed color-mix(in oklab, CanvasText 25%, transparent); text-align: center; }
+      footer { text-align: center; padding: 28px 12px; color: color-mix(in oklab, CanvasText, transparent 45%); }
+    </style>
+  </head>
+  <body>
+    <header class="container">
+      <div class="brand">{{ title|default:"Django" }}</div>
+      <nav class="links">
+        <a class="link" href="/admin/">Admin</a>
+        <a class="link" href="/api/">API Overview</a>
+        <a class="link" href="/api/posts/">Posts API</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div class="card">
+          <h1>Welcome to your Django app</h1>
+          <p>This is a simple landing page rendered by Django templates.</p>
+          <p class="muted">Explore the API endpoints or see posts below fetched from <code>/api/posts/</code>.</p>
+        </div>
+        <div class="card">
+          <div class="links">
+            <a class="link" href="/api/">
+              <strong>API Overview</strong>
+              <span class="muted">Discover available endpoints</span>
+            </a>
+            <a class="link" href="/api/posts/">
+              <strong>Posts</strong>
+              <span class="muted">Browse raw JSON for posts</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top: 20px;">
+        <h2 style="margin: 0 0 12px;">Recent Posts</h2>
+        <div id="posts" class="posts">
+          <div class="empty">Loading posts…</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Built with Django and Django REST Framework.
+    </footer>
+
+    <script>
+      async function loadPosts() {
+        const container = document.getElementById('posts');
+        try {
+          const res = await fetch('/api/posts/');
+          if (!res.ok) throw new Error('Failed to fetch posts');
+          const data = await res.json();
+
+          if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = '<div class="empty">No posts yet. Create one via the API.</div>';
+            return;
+          }
+
+          container.innerHTML = '';
+          for (const post of data) {
+            const item = document.createElement('div');
+            item.className = 'post';
+            const title = post.title ? `<strong>${post.title}</strong>` : '<strong>(untitled)</strong>';
+            const body = post.body ? `<div class="muted">${post.body}</div>` : '';
+            item.innerHTML = `${title}${body}`;
+            container.appendChild(item);
+          }
+        } catch (err) {
+          container.innerHTML = `<div class="empty">${err?.message || 'Error loading posts'}</div>`;
+        }
+      }
+
+      loadPosts();
+    </script>
+  </body>
+  </html>
+
+

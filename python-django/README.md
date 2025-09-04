@@ -55,15 +55,15 @@ psql postgres  # macOS
 
 # Create database and user
 CREATE DATABASE django_blog_db;
-CREATE USER django_user WITH PASSWORD 'django_password';
-ALTER ROLE django_user SET client_encoding TO 'utf8';
-ALTER ROLE django_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE django_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE django_blog_db TO django_user;
+CREATE USER user WITH PASSWORD 'password';
+ALTER ROLE user SET client_encoding TO 'utf8';
+ALTER ROLE user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE django_blog_db TO user;
 
 # Connect to the database and grant schema privileges
 \c django_blog_db;
-GRANT ALL ON SCHEMA public TO django_user;
+GRANT ALL ON SCHEMA public TO user;
 \q
 ```
 
@@ -73,8 +73,8 @@ Create a `.env` file in `python-django/` (same folder as this README) using this
 ```ini
 # Database Configuration
 DB_NAME=django_blog_db
-DB_USER=django_user
-DB_PASSWORD=django_password
+DB_USER=user
+DB_PASSWORD=password
 DB_HOST=localhost
 DB_PORT=5432
 
@@ -347,9 +347,9 @@ pip install -r requirements.txt
 sudo -u postgres psql
 DROP DATABASE django_blog_db;
 CREATE DATABASE django_blog_db;
-GRANT ALL PRIVILEGES ON DATABASE django_blog_db TO django_user;
+GRANT ALL PRIVILEGES ON DATABASE django_blog_db TO user;
 \c django_blog_db;
-GRANT ALL ON SCHEMA public TO django_user;
+GRANT ALL ON SCHEMA public TO user;
 \q
 
 # Then run migrations again
@@ -368,7 +368,7 @@ sudo systemctl start postgresql  # Linux
 brew services start postgresql  # macOS
 
 # Test database connection
-psql -h localhost -U django_user -d django_blog_db
+psql -h localhost -U user -d django_blog_db
 ```
 
 ### psycopg2 Installation Issues

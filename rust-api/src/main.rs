@@ -86,8 +86,14 @@ async fn index() -> Result<impl Responder> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    println!("Starting Rust API server on http://127.0.0.1:8081");
-    
+    // Get port from environment variable or default to 8080
+    let port: u16 = std::env::var("PORT")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(8080);
+
+    println!("Starting Rust API server on http://0.0.0.0:{}", port);
+
     let app_state = web::Data::new(AppState {
         tasks: Mutex::new(vec![
             Task {
@@ -102,13 +108,13 @@ async fn main() -> std::io::Result<()> {
             },
         ]),
     });
-    
+
     HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
             .allow_any_method()
             .allow_any_header();
-            
+
         App::new()
             .app_data(app_state.clone())
             .wrap(cors)
@@ -119,7 +125,7 @@ async fn main() -> std::io::Result<()> {
             .route("/api/tasks/{id}", web::put().to(update_task))
             .route("/api/tasks/{id}", web::delete().to(delete_task))
     })
-    .bind("127.0.0.1:8081")?
+    .bind(format!("0.0.0.0:{}", port))?
     .run()
     .await
 }

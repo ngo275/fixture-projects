@@ -55,12 +55,42 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
+
+import re
+
+db_url = 'postgresql://neondb_owner:npg_DefEoZqHy76K@ep-crimson-frog-ad3029nh-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+# Example: postgresql://user:password@localhost:5432/dbname
+pattern = r'^(?P<scheme>.+?)://(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:/]+)(:(?P<port>\d+))?/(?P<dbname>[^?]+)(\?(?P<query>.*))?$'
+match = re.match(pattern, db_url) if db_url else None
+
+class TmpPostgres:
+    def __init__(self, m):
+        self.username = m.group('user') if m else None
+        self.password = m.group('password') if m else None
+        self.hostname = m.group('host') if m else None
+        self.port = m.group('port') if m else None
+        self.path = '/' + m.group('dbname') if m else ''
+        self.query = m.group('query') if m else ''
+
+tmpPostgres = TmpPostgres(match)
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': tmpPostgres.path.replace('/', ''),
+#         'USER': tmpPostgres.username,
+#         'PASSWORD': tmpPostgres.password,
+#         'HOST': tmpPostgres.hostname,
+#         'PORT': 5432,
+#         'OPTIONS': {},
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'django_blog_db'),
-        'USER': os.environ.get('DB_USER', 'django_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'django_password'),
+        'USER': os.environ.get('DB_USER', 'user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }

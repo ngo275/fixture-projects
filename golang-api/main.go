@@ -37,14 +37,14 @@ func getProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
-	
+
 	for _, product := range products {
 		if product.ID == id {
 			json.NewEncoder(w).Encode(product)
 			return
 		}
 	}
-	
+
 	http.Error(w, "Product not found", http.StatusNotFound)
 }
 
@@ -61,7 +61,7 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
-	
+
 	for index, product := range products {
 		if product.ID == id {
 			products = append(products[:index], products[index+1:]...)
@@ -69,7 +69,7 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	http.Error(w, "Product not found", http.StatusNotFound)
 }
 
@@ -80,21 +80,21 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
-	
+
 	router.HandleFunc("/", home).Methods("GET")
 	router.HandleFunc("/api/products", getProducts).Methods("GET")
 	router.HandleFunc("/api/products/{id}", getProduct).Methods("GET")
 	router.HandleFunc("/api/products", createProduct).Methods("POST")
 	router.HandleFunc("/api/products/{id}", deleteProduct).Methods("DELETE")
-	
+
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"*"},
 	})
-	
+
 	handler := c.Handler(router)
-	
+
 	fmt.Println("Server starting on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

@@ -10,7 +10,9 @@
       "Bash(npm install:*)",
       "Bash(go get:*)",
       "Bash(cargo:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(touch:*)",
+      "Bash(pip install:*)"
     ],
     "deny": []
   }

@@ -26,3 +26,5 @@
 **/db.sqlite3-wal
 
 **/db.sqlite3-lock
+
+**/rust-api/target

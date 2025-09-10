@@ -17,7 +17,8 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="React FastAPI Demo", version="1.0.0")
 
 # Get allowed origins from environment variable or use default
-allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+# allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+allowed_origins = os.getenv("CORS_ORIGINS").split(",")
 
 app.add_middleware(
     CORSMiddleware,
